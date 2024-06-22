@@ -9,6 +9,12 @@ const Transacao = sequelize.define('Transacao', {
         autoIncrement: true,
         field: 'id_transacao'
     },
+    tagTransacao:{
+        type: DataTypes.STRING(4),
+        allowNull: false,
+        unique: true,
+        field: 'tag_transacao'
+    },
     nomeTransacao:{
         type: DataTypes.STRING(100),
         allowNull: false,

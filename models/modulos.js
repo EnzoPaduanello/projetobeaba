@@ -9,6 +9,12 @@ const Modulo = sequelize.define('Modulo', {
         autoIncrement: true,
         field: 'id_modulo'
     },
+    tagModulo:{
+        type: DataTypes.STRING(4),
+        allowNull: false,
+        unique: true,
+        field: 'tag_modulo'
+    },
     nomeModulo:{
         type: DataTypes.STRING(100),
         allowNull: false,

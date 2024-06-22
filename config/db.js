@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('projetobeaba', 'postgres', 'postgres', {
+const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
     host: 'localhost', // ou o endereço IP ou URL do servidor do banco de dados
     port: 5432, // Porta padrão do PostgreSQL
     dialect: 'postgres', // Especifica que estamos usando o PostgreSQL
