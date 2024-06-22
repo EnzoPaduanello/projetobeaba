@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuários</title>
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/cadastro.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="/"><img src="../img/quero-quero-logo.png" alt="Logo"></a>
+          </div>
+        <nav>
+          <ul class="menu">
+            <li><a href="../gerenciamento/gerenciamentoUsuarios.html"><button class="nav-button">Gerenciamento de Usuários</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoModulos.html"><button class="nav-button">Gerenciamento de Módulos</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoPerfis.html"><button class="nav-button">Gerenciamento de Perfis</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoTransacoes.html"><button class="nav-button">Gerenciamento de Transações</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoFuncoes.html"><button class="nav-button">Gerenciamento de Funções</button></a></li>
+          </ul>
+        </nav>
+        <div class="menu-toggle">
+          <div class="hamburger"></div>
+          <div class="hamburger"></div>
+          <div class="hamburger"></div>
+        </div>
+    </header>
+
+    <form class="form" id="cadastroUsuarioForm" action="/api/usuarios" method="POST">
+        
+        <div class="container-form">
+            <div class="content">
+
+                <h1>Cadastro de Usuários</h1>
+                
+                <input class="idInput">
+
+                <div class="input-group">
+                    <label for="matriculaInput" class="label">Matrícula</label>
+                    <input id="matriculaInput" class="input" type="text" placeholder="exemplo: 123456" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="nameInput" class="label">Nome</label>
+                    <input id="nameInput" class="input" type="text" placeholder="Nome Completo" required>
+                </div>
+            
+                <div class="input-group">
+                    <label for="emailInput" class="label">Email</label>
+                    <input id="emailInput" class="input" type="email"  placeholder="exemplo@email.com" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="passwordInput" class="label">Senha</label>
+                    <input id="passwordInput" class="input" type="text" placeholder="exemplo: Senh4!23" required>
+                </div>
+                
+                <br>
+
+                <div class="select-div">
+                    <select class="dadosSelect" id="perfilSelect">
+                        <option value="">Selecione um perfil</option>
+                    </select>
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" class="submit-button" id="cadastro-usuario-button">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <script src="/js/nav.js"></script>
+    <script src="/js/usuarios/cadastro.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edição de Transações</title>
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="../main.html"><img src="../img/quero-quero-logo.png" alt="Logo"></a>
+          </div>
+        <nav>
+          <ul class="menu">
+            <li><a href="../gerenciamento/gerenciamentoUsuarios.html"><button class="nav-button">Gerenciamento de Usuários</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoModulos.html"><button class="nav-button">Gerenciamento de Módulos</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoPerfis.html"><button class="nav-button">Gerenciamento de Perfis</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoTransacoes.html"><button class="nav-button">Gerenciamento de Transações</button></a></li>
+            <li><a href="../gerenciamento/gerenciamentoFuncoes.html"><button class="nav-button">Gerenciamento de Funções</button></a></li>
+          </ul>
+        </nav>
+        <div class="menu-toggle">
+          <div class="hamburger"></div>
+          <div class="hamburger"></div>
+          <div class="hamburger"></div>
+        </div>
+    </header>
+
+    <form class="form" id="edicaoTransacaoForm">
+        <div class="container-form">
+            <div class="content">
+
+                <h1>Edição de Transações</h1>
+                <br>
+                <input class="idInput">
+
+                <div class="input-group">
+                    <label for="tagInput" class="label">TAG</label>
+                    <input id="tagInput" class="input" type="text" placeholder="Tag da Transação" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="nomeInput" class="label">Nome da Transação</label>
+                    <input id="nomeInput" class="input" type="text" placeholder="Nome Completo" required>
+                </div>
+            
+                <div class="input-group">
+                    <label for="descricaoInput" class="label">Descrição</label>
+                    <input id="descricaoInput" class="input" type="text" placeholder="Descrição">
+                </div>
+                <br>
+                <div class="select-div">
+                    <select class="dadosSelect" id="funcaoSelect" multiple>
+                        <option value="">Selecione uma função</option>
+                    </select>
+                </div>
+
+                <div class="button-container">
+                    <button class="submit-button" id="edicao-transacao-button">Enviar</button>
+                    <button type="submit" class="submit-button" id="exclusao-button">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script src="/js/nav.js"></script>
+    <script src="/js/transacoes/edicaoTransacao.js"></script>
+</body>
+</html>
