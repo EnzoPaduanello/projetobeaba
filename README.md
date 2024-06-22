@@ -1,5 +1,5 @@
 # projetobeaba
 
-Todos os cadastros estão funcionando no backend
+Todos os cadastros estão funcionando.
 
-O unico cadastro funcionando 100% juntamente com o front é o de usuarios
+No momento, eu estou terminando de construir as listas e as associações Muitos para Muitos de acordo com a normalização.
