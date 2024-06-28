@@ -1,127 +1,189 @@
-const modulos = JSON.parse(localStorage.getItem('modulos')) || []
-const transacoes = JSON.parse(localStorage.getItem('transacoes')) || []
-const funcoes = JSON.parse(localStorage.getItem('funcoes')) || []
+document.addEventListener('DOMContentLoaded', function() {
+    const id = getParametroUrl('id')
+    console.log(id)
 
-function getParametroUrl(name) {
-    const parametros = new URLSearchParams(window.location.search);
-    return parametros.get(name);
-};
-
-const valor = getParametroUrl('valor')
-console.log(valor)
-console.log(modulos)
-
-function preencherCampos(){
-    criarCheckbox()
-
-    const checkboxesTransacao = document.querySelectorAll('.checkboxes-transacao');
-    const checkboxesFuncao = document.querySelectorAll('.checkboxes-funcao')
-
-    modulos[valor].transacoes.forEach(transacao => {
-        checkboxesTransacao.forEach(checkbox => {
-        
-            if (checkbox.value === transacao) {
-                checkbox.checked = true;
-            }
-        });
+    fetch(`/api/modulos/${id}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha ao carregar modulo: ' + response.statusText);
+        }
+        return response.json();
     })
-
-    modulos[valor].funcoes.forEach(funcao => {
-        checkboxesFuncao.forEach(checkbox => {
-        
-            if (checkbox.value === funcao) {
-                checkbox.checked = true;
-            }
-        });
+    .then(data => {
+        carregarDados(data);
     })
+    .catch(error => {
+        console.error('Erro ao carregar modulo:', error);
+        alert('Não foi possível carregar o modulo.');
+    });
+});
 
-    document.getElementById("nameInput").value = modulos[valor].name;
+
+async function carregarDados(modulo){
+    document.getElementById("tagInput").value = modulo.tagModulo;
+    document.getElementById("nomeInput").value = modulo.nomeModulo;
+    document.getElementById("descricaoInput").value = modulo.descricaoModulo;
+    const transacaoSelect = document.getElementById("transacaoSelect");
+    
+    await criarOpcoesPerfil(transacaoSelect, modulo.idTransacao);
+
+    console.log("Transações carregadas")
+
+    async function criarOpcoesPerfil(transacaoSelect, selectedTransacaoId){
+        try {
+            const response = await fetch('/api/transacoes');
+            if (!response.ok) {
+                throw new Error('Falha ao carregar transações: ' + response.statusText);
+            }
+            const transacoes = await response.json();
+            transacoes.forEach(transacao => {
+                const option = document.createElement('option');
+                option.value = transacao.idTransacao;
+                option.textContent = transacao.nomeTransacao;
+                if (transacao.idTransacao === selectedTransacaoId) {
+                    option.selected = true;
+                }
+                transacaoSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar perfis:', error);
+            alert('Não foi possível carregar os perfis.');
+        }
+    };
 };
-
-function criarCheckbox(){
-    const transacaoDiv = document.getElementById('checkbox-tansacoes');
-    if (transacoes !== null) {
-        
-        transacoes.forEach(function(transacao) {
-            if(transacao.name !== undefined){
-                const novoCheckbox = '<label><input type="checkbox" class="checkboxes-transacao" id="' + transacao.name + '-checkbox" value="' + transacao.name +'">'+transacao.name+'</input><label>';
-                transacaoDiv.insertAdjacentHTML('beforeend', novoCheckbox);
-            }
-        });
-            
-    } else {
-        console.log('Não há transações armazenadas no localStorage.');
-    }
-
-    const funcaoDiv = document.getElementById('checkbox-funcoes');
-    if (funcoes !== null) {
-
-        funcoes.forEach(function(funcao) {
-            if (funcao.name !== undefined) {
-                const novoCheckbox = '<label><input type="checkbox" class="checkboxes-funcao" id="' + funcao.name + '-checkbox" value="' + funcao.name +'">'+funcao.name+'</input><label>';
-                funcaoDiv.insertAdjacentHTML('beforeend', novoCheckbox);
-            }
-        });
-    } 
-    else {
-        console.log('Não há transações armazenadas no localStorage.');
-    }
-}
 
 document.getElementById('edicao-modulo-button').addEventListener('click', function(event){
     event.preventDefault()
 
-    const funcoesCheckbox = lerCheckboxes(1)
-    const transacoesCheckbox = lerCheckboxes(2) 
+    const idModulo = getParametroUrl('id')
 
-    console.log(funcoesCheckbox)
-    console.log(transacoesCheckbox)
+    const tagModulo = document.getElementById("tagInput").value;
+    const nomeModulo = document.getElementById("nomeInput").value;
+    const descricaoModulo = document.getElementById("descricaoInput").value;
+    const idTransacao = document.getElementById("transacaoSelect").value;
 
-    const name = document.getElementById('nameInput').value;
-    const nameUpperCase = name.toUpperCase();
+    const tagUpperCase = tagModulo.toUpperCase();
+    const nomeUpperCase = nomeModulo.toUpperCase();
 
-    modulos[valor] = {
-        name: nameUpperCase,
-        funcoes: funcoesCheckbox,
-        transacoes: transacoesCheckbox
+    let transacaoValor = "";
+
+    if(idTransacao === ""){
+        transacaoValor = null
+    }
+    else{
+        transacaoValor = idTransacao
     }
 
-    localStorage.setItem('modulos', JSON.stringify(modulos))
+    moduloData = {
+        tagModulo: tagUpperCase,
+        nomeModulo: nomeUpperCase,
+        descricaoModulo: descricaoModulo,
+        idTransacao: transacaoValor
+    };
 
-    exibirMensagem('Módulo editado com sucesso')
+    console.log('Dados: ' + moduloData)
 
-    window.location.assign('../gerenciamento/gerenciamentoModulos.html')
+    fetch(`/api/modulos/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(moduloData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha na requisição: ' + response.statusText);  // Lança um erro se a resposta não for OK
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert("Módulo editado com sucesso");
+            //window.location.assign('/modulos/gerenciamento');
+        } else {
+            alert('Falha no cadastro: ' + data.message);  // Mostra uma mensagem de erro se não for bem-sucedido
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Falha no cadastro: ' + error.message);  // Mostra uma mensagem de erro em caso de falha na requisição
+    });
+
+    const idFuncoes = document.getElementById("funcaoSelect").value;
+
+    if(idFuncoes === ""){
+        window.location.assign('/modulos/gerenciamento');
+    } else {
+        associarModuloFuncao();
+    }
 })
 
-function lerCheckboxes(numero){
-    let checkboxes
+async function associarModuloFuncao(){
+    const moduloId = getParametroUrl('id')
+    const funcoesAssociadas = await carregarAssociacoesExistentes(moduloId);
+    let funcoesAceitas = [];
+    let funcoesRecusadas = [];
 
-    if(numero === 1){
-        checkboxes = document.querySelectorAll('.checkboxes-funcao');
-             valoresSelecionados = [];
+    const selectedOptions = document.getElementById('funcaoSelect').selectedOptions;
+    const funcoesIds = Array.from(selectedOptions).map(option => parseInt(option.value, 10));
 
-            checkboxes.forEach(function(checkbox) {
-                if (checkbox.checked) {
-                    valoresSelecionados.push(checkbox.value);
+    console.log({ transacaoId, funcoesIds }); // Confirme que os dados estão corretos
+
+    const funcoesAssociadasIds = new Set(funcoesAssociadas.map(funcao => funcao.idFuncao));
+
+    funcoesIds.forEach((funcaoid) => {
+        if (!funcoesAssociadasIds.has(funcaoid)) {
+            funcoesAceitas.push(funcaoid);
+        } else {
+            funcoesRecusadas.push(funcaoid);
+        }
+    });
+
+    console.log({ funcoesAceitas, funcoesRecusadas });
+
+    if (funcoesAceitas.length > 0) {
+        try {
+            // Use Promise.all para fazer todas as requisições de uma vez
+            await Promise.all(funcoesAceitas.map(async (funcaoId) => {
+                console.log(`Associando função ${funcaoId} à transação ${moduloId}`);
+
+                const response = await fetch(`/api/modulos/${moduloId}/funcoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idFuncao: funcaoId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha na requisição: ' + response.statusText);
                 }
-            });
 
-            return valoresSelecionados
+                const data = await response.json();
+                console.log('Success:', data);
+                window.location.assign('/associacoes/moduloFuncao')
+            }));
+
+            alert('Todas as funções foram associadas com sucesso');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Falha ao associar: ' + error.message);
+        }
+    } else {
+        alert('Todas as funções selecionadas já estão cadastradas');
     }
+}
 
-    else if(numero ===2){
-        checkboxes = document.querySelectorAll('.checkboxes-transacao');
-             valoresSelecionados = [];
-
-            checkboxes.forEach(function(checkbox) {
-                if (checkbox.checked) {
-                    valoresSelecionados.push(checkbox.value);
-                }
-            });
-
-            return valoresSelecionados
+async function carregarAssociacoesExistentes(idModulo) {
+    try {
+        const response = await fetch(`/api/modulos/${idModulo}/funcoes`);
+        if (!response.ok) {
+            throw new Error('Falha ao carregar funções: ' + response.statusText);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        alert('Erro ao buscar funções associadas à transação');
+        return [];
     }
-    
 }
 
 document.getElementById('exclusao-button').addEventListener('click', function(event){
@@ -139,12 +201,7 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
     window.location.assign('../gerenciamento/gerenciamentoModulos.html');
 });
 
-function exibirMensagem(mensagem) {
-    const mensagemDiv = document.getElementById("mensagem");
-    mensagemDiv.textContent = mensagem;
-    setTimeout(() => {
-        mensagemDiv.textContent = "";
-    }, 3000); 
-}
-
-preencherCampos()
+function getParametroUrl(id) {
+    const parametros = new URLSearchParams(window.location.search);
+    return parametros.get(id);
+};

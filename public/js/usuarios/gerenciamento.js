@@ -38,11 +38,11 @@ function criarListaUsuarios(usuarios) {
 
     usuarios.forEach(usuario => {
         const aElement = document.createElement('a')
-        aElement.href = '/api/usuarios/' + usuario.idUsuario
+        aElement.href = '/usuarios/edicao?id=' + usuario.idUsuario
 
         const ulElement = document.createElement('ul');
-        ulElement.id = usuario.matricula;
-        ulElement.className = 'user-list';
+        ulElement.id = usuario.idUsuario;
+        ulElement.className = 'dados-list';
 
         const lMatricula = document.createElement('li');
         const lNome = document.createElement('li');
@@ -52,7 +52,14 @@ function criarListaUsuarios(usuarios) {
         lMatricula.textContent = 'Matrícula: ' + usuario.matricula;
         lNome.textContent = 'Nome: ' + usuario.username;
         lEmail.textContent = 'Email: ' + usuario.email;
-        lPerfil.textContent = 'Perfil: ' + usuario.idPerfil;
+
+        if(usuario.idPerfil === null){
+            lPerfil.textContent = `Perfis: Nenhum perfil cadastrada no modulo.`
+        }
+        
+        else{
+            lPerfil.textContent = 'Perfis: ' + usuario.idPerfil
+        }
 
         ulElement.appendChild(lMatricula);
         ulElement.appendChild(lNome);

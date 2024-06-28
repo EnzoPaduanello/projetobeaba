@@ -23,36 +23,42 @@ const PORT = 3000;
 Perfil.belongsToMany(Modulo, {
     through: PerfilModulo,
     foreignKey: 'idPerfil',
-    otherKey: 'idModulo'
+    otherKey: 'idModulo',
+    as: 'Modulos'
 });
 Modulo.belongsToMany(Perfil, {
     through: PerfilModulo,
     foreignKey: 'idModulo',
-    otherKey: 'idPerfil'
+    otherKey: 'idPerfil',
+    as: 'Perfis'
 });
 
 //Modulo e Função
 Modulo.belongsToMany(Funcao, {
     through: ModuloFuncao,
     foreignKey: 'idModulo',
-    otherKey: 'idFuncao'
+    otherKey: 'idFuncao',
+    as: 'Funcoes'
 });
 Funcao.belongsToMany(Modulo, {
     through: ModuloFuncao,
     foreignKey: 'idFuncao',
-    otherKey: 'idModulo'
+    otherKey: 'idModulo',
+    as: 'Modulos'
 });
 
 //Transação e Função
 Transacao.belongsToMany(Funcao, {
     through: TransacaoFuncao,
     foreignKey:'idTransacao',
-    otherKey: 'idFuncao'
+    otherKey: 'idFuncao',
+    as: 'Funcoes'
 });
 Funcao.belongsToMany(Transacao, {
     through: TransacaoFuncao,
     foreignKey: 'idFuncao',
-    otherKey: 'idTransacao'
+    otherKey: 'idTransacao',
+    as: 'Transacoes'
 });
 
 // Middleware para parsear o corpo das requisições em JSON
@@ -61,8 +67,9 @@ app.use(express.json());
 
 // Middleware para servir arquivos estáticos.
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 
-//Rotas para associar o app com os controlers
+//Rotas para associar o app com os controlers de associação
 app.use('/api', associarTransacaoFuncao);
 
 //Rotas usuários
@@ -74,14 +81,34 @@ app.get('/usuarios/gerenciamento', (req,res) => {
     res.sendFile(path.join(__dirname, 'views', 'usuarios', 'gerenciamento.html'))
 });
 
+app.get('/usuarios/edicao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'usuarios', 'edicaoUsuario.html'));
+});
+
 //Rotas perfis
 app.get('/perfis/cadastro', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'perfis', 'cadastro.html'));
 });
 
+app.get('/perfis/gerenciamento', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'perfis', 'gerenciamento.html'))
+});
+
+app.get('/perfis/edicao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'perfis', 'edicaoPerfil.html'))
+})
+
 //Rotas modulos
 app.get('/modulos/cadastro', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'modulos', 'cadastro.html'));
+});
+
+app.get('/modulos/gerenciamento', (req,res) => {
+    res.sendFile(path.join(__dirname, 'views', 'modulos', 'gerenciamento.html'))
+});
+
+app.get('/modulos/edicao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'modulos', 'edicaoModulo.html'))
 });
 
 //Rotas transações
@@ -89,12 +116,12 @@ app.get('/transacoes/cadastro', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'transacoes', 'cadastro.html'));
 });
 
-app.get('/transacoes/edicao', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'transacoes', 'edicaoTransacao.html'))
-});
-
 app.get('/transacoes/gerenciamento', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'transacoes', 'gerenciamento.html'));
+});
+
+app.get('/transacoes/edicao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'transacoes', 'edicaoTransacao.html'))
 });
 
 //Rotas funções
@@ -106,10 +133,22 @@ app.get('/funcoes/gerenciamento', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'funcoes', 'gerenciamento.html'))
 });
 
+app.get('/funcoes/edicao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'funcoes', 'edicaoFuncao.html'))
+});
+
 //Outras rotas
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'main.html'))
-})
+});
+
+app.get('/associacoes/transacaoFuncao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'associacoes', 'transacoesFuncoes.html'))
+});
+
+app.get('/associacoes/moduloFuncao', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'associacoes', 'modulosFuncoes.html'))
+});
 
 //Cadastros
 app.post('/api/usuarios', async (req, res) => {
@@ -178,9 +217,31 @@ app.get('/api/usuarios', async (req, res) => {
     }  
 });
 
+app.get('/api/usuarios/:idUsuario', async (req, res) => {
+    const { idUsuario } = req.params;
+    try {
+        const usuario = await Usuario.findByPk(idUsuario);
+        res.json(usuario);
+    } catch (error) {
+        console.error('Erro ao buscar usuario:', error);
+        res.status(500).json({ error: 'Erro ao buscar usuario '})
+    }  
+});
+
 app.get('/api/perfis', async (req, res) => {
     try {
         const perfis = await Perfil.findAll();
+        res.json(perfis);
+    } catch (error) {
+        console.error('Erro ao buscar perfis:', error);
+        res.status(500).json({ error: 'Erro ao buscar perfis' });
+    }
+});
+
+app.get('/api/perfis/:idPerfil', async (req, res) => {
+    const { idPerfil } = req.params;
+    try {
+        const perfis = await Perfil.findByPk(idPerfil);
         res.json(perfis);
     } catch (error) {
         console.error('Erro ao buscar perfis:', error);
@@ -195,6 +256,17 @@ app.get('/api/modulos', async (req, res) => {
     } catch (error) {
         console.error('Erro ao buscar modulos')
         res.status(500).json({ error: 'Erro ao buscar modulos'})
+    }
+});
+
+app.get('/api/modulos/:idModulo', async (req, res) => {
+    const { idModulo } = req.params;
+    try {
+        const modulo = await Modulo.findByPk(idModulo);
+        res.json(modulo);
+    } catch (error) {
+        console.error('Erro ao buscar modulo:', error);
+        res.status(500).json({ error: 'Erro ao buscar modulo' });
     }
 });
 
@@ -223,6 +295,17 @@ app.get('/api/funcoes', async (req, res) => {
     try {
         const funcoes = await Funcao.findAll();
         res.json(funcoes)
+    } catch (error) {
+        console.error('Erro ao buscar funções:', error)
+        res.status(500).json({ error: 'Erro ao buscar funções '})
+    }
+});
+
+app.get('/api/funcoes/:idFuncao', async (req, res) => {
+    const { idFuncao } = req.params;
+    try {
+        const funcao = await Funcao.findByPk(idFuncao);
+        res.json(funcao)
     } catch (error) {
         console.error('Erro ao buscar funções:', error)
         res.status(500).json({ error: 'Erro ao buscar funções '})

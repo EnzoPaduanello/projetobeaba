@@ -42,7 +42,7 @@ function criarListaTransacoes(transacoes) {
 
         const ulElement = document.createElement('ul');
         ulElement.id = transacao.idTransacao;
-        ulElement.className = 'transacao-list';
+        ulElement.className = 'dados-list';
 
         const lTag = document.createElement('li');
         const lNome = document.createElement('li');

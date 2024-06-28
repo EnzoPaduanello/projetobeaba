@@ -1,48 +1,76 @@
-const funcoes = JSON.parse(localStorage.getItem('funcoes')) || [];
+document.addEventListener('DOMContentLoaded', function() {
+    const id = getParametroUrl('id')
+    console.log(id)
 
-function getParametroUrl(name) {
-    const parametros = new URLSearchParams(window.location.search);
-    return parametros.get(name);
-}
-
-const valor = getParametroUrl('valor')
-console.log(valor)
-console.log(funcoes)
+    fetch(`/api/funcoes/${id}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha ao carregar função: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        carregarDados(data);
+    })
+    .catch(error => {
+        console.error('Erro ao carregar função:', error);
+        alert('Não foi possível carregar a função.');
+    });
+});
 
 
 document.getElementById('edicao-funcao-button').addEventListener('click', function(event){
     event.preventDefault()
 
-    const name = document.getElementById("nameInput").value;
-    const nameUpperCase = name.toUpperCase();
+    const id = getParametroUrl('id')
 
-    const descricao = document.getElementById("descricaoInput").value;
+    const tagFuncao = document.getElementById("tagInput").value;
+    const tagUpperCase = tagFuncao.toUpperCase();
 
-    if (name === "" || descricao === ""){
-        exibirMensagem("Preencha todos os campos")
-    }
-    else{
+    const nomeFuncao = document.getElementById("nomeInput").value;
+    const nomeUpperCase = nomeFuncao.toUpperCase();
 
-        funcoes[valor] = {
-            name: nameUpperCase,
-            descricao: descricao
-        };
+    const descricaoFuncao = document.getElementById("descricaoInput").value;
 
-        localStorage.setItem('funcoes', JSON.stringify(funcoes))
+    funcaoData = {
+        tagFuncao: tagUpperCase,
+        nomeFuncao: nomeUpperCase,
+        descricaoFuncao: descricaoFuncao
+    };
 
-        document.getElementById("nameInput").value = "";
-        document.getElementById("descricaoInput").value = "";
+    console.log('Dados: ' + funcaoData)
 
-        exibirMensagem("Função editada com sucesso")
-        console.log(localStorage)
-
-        window.location.assign('../gerenciamento/gerenciamentoFuncoes.html');
-    }
+    fetch(`/api/funcoes/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(funcaoData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha na requisição: ' + response.statusText);  // Lança um erro se a resposta não for OK
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert("Função editada com sucesso");
+            window.location.assign('/funcoes/gerenciamento');
+        } else {
+            alert('Falha no cadastro: ' + data.message);  // Mostra uma mensagem de erro se não for bem-sucedido
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Falha no cadastro: ' + error.message);  // Mostra uma mensagem de erro em caso de falha na requisição
+    });
 })
 
-function preencherCampos(){
-    document.getElementById("nameInput").value = funcoes[valor].name;
-    document.getElementById("descricaoInput").value = funcoes[valor].descricao;
+function carregarDados(funcao){
+    document.getElementById("tagInput").value = funcao.tagFuncao;
+    document.getElementById("nomeInput").value = funcao.nomeFuncao;
+    document.getElementById("descricaoInput").value = funcao.descricaoFuncao;
 }
 
 document.getElementById('exclusao-button').addEventListener('click', function(event){
@@ -55,16 +83,11 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
 
     localStorage.setItem('funcoes', JSON.stringify(funcoes));
 
-    exibirMensagem("Função excluida com sucesso")
+    
     window.location.assign('../gerenciamento/gerenciamentoFuncoes.html');
 });
 
-function exibirMensagem(mensagem) {
-    const mensagemDiv = document.getElementById("mensagem");
-    mensagemDiv.textContent = mensagem;
-    setTimeout(() => {
-        mensagemDiv.textContent = "";
-    }, 3000); 
+function getParametroUrl(id) {
+    const parametros = new URLSearchParams(window.location.search);
+    return parametros.get(id);
 };
-
-preencherCampos()

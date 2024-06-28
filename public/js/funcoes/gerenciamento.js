@@ -22,14 +22,14 @@ function criarListaFuncoes(funcoes) {
         divLista.querySelector('a').remove();
     }
 
-    funcoes.forEach((funcao, i) => {
+    funcoes.forEach((funcao) => {
         
         const aElement = document.createElement('a')
-        aElement.href = '/api/funcoes/' + funcao.idFuncao
+        aElement.href = '/funcoes/edicao?id=' + funcao.idFuncao
 
         const ulElement = document.createElement('ul');
-        ulElement.id = i;
-        ulElement.className = 'funcao-list';
+        ulElement.id = funcao.idFuncao;
+        ulElement.className = 'dados-list';
 
         const lTag = document.createElement('li');
         const lNome = document.createElement('li');

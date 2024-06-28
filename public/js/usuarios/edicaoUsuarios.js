@@ -1,54 +1,91 @@
-const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+document.addEventListener('DOMContentLoaded', function() {
+    const id = getParametroUrl('id')
+    console.log(id)
 
-function getParametroUrl(name) {
-    const parametros = new URLSearchParams(window.location.search);
-    return parametros.get(name);
-}
+    fetch(`/api/usuarios/${id}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha ao carregar usuario: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        carregarDados(data);
+    })
+    .catch(error => {
+        console.error('Erro ao carregar usuario:', error);
+        alert('Não foi possível carregar o usuario.');
+    });
+});
 
-const valor = getParametroUrl('valor')
-console.log(valor)
+async function carregarDados(usuario){
+    document.getElementById("matriculaInput").value = usuario.matricula;
+    document.getElementById("nomeInput").value = usuario.username;
+    document.getElementById("emailInput").value = usuario.email;
+    document.getElementById("passwordInput").value = usuario.password;
+    const perfilSelect = document.getElementById("dadosSelect");
 
-
-function preencherCampos(){
-    document.getElementById("matriculaInput").value = usuarios[valor].matricula;
-    document.getElementById("nameInput").value = usuarios[valor].name;
-    document.getElementById("emailInput").value = usuarios[valor].email;
-    document.getElementById("passwordInput").value = usuarios[valor].password;
+    await criarOpcoesPerfil(perfilSelect, usuario.idPerfil);
     
+    console.log('Perfis carregados');
 
-    const perfil = JSON.parse(localStorage.getItem('perfis'));
-    const selectElement = document.getElementById("perfil-options");
-    criarOpcoesPerfil(selectElement, perfil)
-
-    document.getElementById("perfil-options").value = usuarios[valor].perfil;
+    async function criarOpcoesPerfil(perfilSelect, selectedPerfilId){
+        try {
+            const response = await fetch('/api/perfis');
+            if (!response.ok) {
+                throw new Error('Falha ao carregar perfis: ' + response.statusText);
+            }
+            const perfis = await response.json();
+            perfis.forEach(perfil => {
+                const option = document.createElement('option');
+                option.value = perfil.idPerfil;
+                option.textContent = perfil.nomePerfil;
+                if (perfil.idPerfil === selectedPerfilId) {
+                    option.selected = true;
+                }
+                perfilSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar perfis:', error);
+            alert('Não foi possível carregar os perfis.');
+        }
+    };
 }
 
-function criarOpcoesPerfil(select, options){
-    if (options !== null){
-        options.forEach(option => {
-            if (option.name !== undefined){
-                const opt = document.createElement('option');
-                opt.value = option.name;
-                opt.textContent = option.name;
-                select.appendChild(opt);
-            }
+
+function criarOpcoesPerfil(){
+    // Carrega os perfis e adiciona ao select
+    fetch('/api/perfis')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha ao carregar perfis: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const perfilSelect = document.getElementById('dadosSelect');
+        data.forEach(perfil => {
+            let option = new Option(perfil.nomePerfil, perfil.idPerfil); // nomePerfil como texto, idPerfil como valor
+            perfilSelect.add(option);
         });
-    }
-    else{
-        console.log("Nenhum perfil encontrado")
-    }
+    })
+    .catch(error => {
+        console.error('Erro ao carregar perfis:', error);
+        alert('Não foi possível carregar os perfis.');
+    });
 };
 
 document.getElementById('edicao-usuario-button').addEventListener('click', function(event) {
     event.preventDefault();
+    const idUsuario = getParametroUrl('id')
 
     const matricula = document.getElementById("matriculaInput").value;
-    const name = document.getElementById("nameInput").value;
+    const nome = document.getElementById("nomeInput").value;
     const email = document.getElementById("emailInput").value;
     const password = document.getElementById("passwordInput").value;
-    const perfil = document.getElementById("perfil-options").value;
+    const perfil = document.getElementById("dadosSelect").value;
 
-    const nameUpperCase = name.toUpperCase();
+    const nomeUpperCase = nome.toUpperCase();
 
     let perfilValor = "";
 
@@ -59,25 +96,39 @@ document.getElementById('edicao-usuario-button').addEventListener('click', funct
         perfilValor = perfil
     }
 
-    
-    usuarios[valor] = {
-        matricula: matricula,
-        name: nameUpperCase,
+    const usuarioData = {
+        username: nomeUpperCase,
         email: email,
         password: password,
-        perfil: perfilValor
+        matricula: matricula,
+        idPerfil: perfilValor
     };
 
-    localStorage.removeItem('usuarios')
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-    document.getElementById("matriculaInput").value = "";
-    document.getElementById("nameInput").value = "";
-    document.getElementById("emailInput").value = "";
-    document.getElementById("passwordInput").value = "";
-
-    exibirMensagem("Usuário editado com sucesso");
-    console.log(localStorage);
+    fetch(`/api/usuarios/${idUsuario}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(usuarioData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha na requisição: ' + response.statusText);  // Lança um erro se a resposta não for OK
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Usuário editado com sucesso')
+            window.location.assign('/usuarios/gerenciamento');
+        } else {
+            alert('Falha no cadastro: ' + data.message);  // Mostra uma mensagem de erro se não for bem-sucedido
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Falha no cadastro: ' + error.message);  // Mostra uma mensagem de erro em caso de falha na requisição
+    }); 
 })
 
 document.getElementById('exclusao-button').addEventListener('click', function(event){
@@ -93,17 +144,10 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
 
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
 
-    exibirMensagem("Usuário excluido com sucesso")
     window.location.assign('../gerenciamento/gerenciamentoUsuarios.html');
 });
 
-function exibirMensagem(mensagem) {
-    const mensagemDiv = document.getElementById("mensagem");
-    mensagemDiv.textContent = mensagem;
-    setTimeout(() => {
-        mensagemDiv.textContent = "";
-    }, 3000); 
+function getParametroUrl(id) {
+    const parametros = new URLSearchParams(window.location.search);
+    return parametros.get(id);
 };
-
-console.log(usuarios)
-preencherCampos()

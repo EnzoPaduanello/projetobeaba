@@ -24,7 +24,8 @@ const TransacaoFuncao = sequelize.define('TransacaoFuncao', {
         references:{
             model: 'funcoes',
             key: 'id_funcao'
-        }
+        },
+        field: 'id_funcao'
     }
 },{
     tableName: 'transacoes_funcoes',

@@ -47,7 +47,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById("nomeInput").value = "";
         document.getElementById("descricaoInput").value = "";
-
-        
     })
 });

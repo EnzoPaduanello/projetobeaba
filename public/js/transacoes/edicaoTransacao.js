@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+        $('.dadosSelect').select2({
+            placeholder: "Selecione as funções"
+        });
+    });
+    
     const id = getParametroUrl('id')
     console.log(id)
 
@@ -63,15 +69,11 @@ document.getElementById('edicao-transacao-button').addEventListener('click', fun
         console.error('Erro:', error);
         alert('Falha no cadastro: ' + error.message);  // Mostra uma mensagem de erro em caso de falha na requisição
     });
-
-    document.getElementById("tagInput").value = "";
-    document.getElementById("nomeInput").value = "";
-    document.getElementById("descricaoInput").value = "";
     
     const funcoes = document.getElementById("funcaoSelect").value;
 
     if (funcoes === ""){
-        
+        window.location.assign('/transacoes/gerenciamento')
     } else {
         associarTransacaoFuncao();
     }
@@ -93,32 +95,75 @@ function carregarDados(transacao){
     });
 }
 
-function associarTransacaoFuncao(){
-    const transacaoId = getParametroUrl('id');
+async function associarTransacaoFuncao() {
+    const transacaoId = parseInt(getParametroUrl('id'), 10);
+    const funcoesAssociadas = await carregarAssociacoesExistentes(transacaoId);
+    let funcoesAceitas = [];
+    let funcoesRecusadas = [];
+
     const selectedOptions = document.getElementById('funcaoSelect').selectedOptions;
-    const funcoesIds = Array.from(selectedOptions).map(option => option.value);
+    const funcoesIds = Array.from(selectedOptions).map(option => parseInt(option.value, 10));
 
     console.log({ transacaoId, funcoesIds }); // Confirme que os dados estão corretos
 
-    fetch(`/api/transacoes/${transacaoId}/funcoes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idFuncao })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Falha na requisição: ' + response.statusText);
+    const funcoesAssociadasIds = new Set(funcoesAssociadas.map(funcao => funcao.idFuncao));
+
+    funcoesIds.forEach((funcaoid) => {
+        if (!funcoesAssociadasIds.has(funcaoid)) {
+            funcoesAceitas.push(funcaoid);
+        } else {
+            funcoesRecusadas.push(funcaoid);
         }
-        return response.json();
-    })
-    .then(data => {
-        alert('Associação realizada com sucesso!');
-        console.log('Success:', data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Falha ao associar: ' + error.message);
     });
+
+    console.log({ funcoesAceitas, funcoesRecusadas });
+
+    if (funcoesAceitas.length > 0) {
+        try {
+            // Use Promise.all para fazer todas as requisições de uma vez
+            await Promise.all(funcoesAceitas.map(async (funcaoId) => {
+                console.log(`Associando função ${funcaoId} à transação ${transacaoId}`);
+
+                const response = await fetch(`/api/transacoes/${transacaoId}/funcoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idFuncao: funcaoId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha na requisição: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                console.log('Success:', data);
+                window.location.assign('/associacoes/transacaoFuncao')
+            }));
+
+            alert('Todas as funções foram associadas com sucesso');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Falha ao associar: ' + error.message);
+        }
+    } else {
+        alert('Todas as funções selecionadas já estão cadastradas');
+    }
 }
+
+async function carregarAssociacoesExistentes(idTransacao) {
+    try {
+        const response = await fetch(`/api/transacoes/${idTransacao}/funcoes`);
+        if (!response.ok) {
+            throw new Error('Falha ao carregar funções: ' + response.statusText);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        alert('Erro ao buscar funções associadas à funções');
+        return []; // Retorne um array vazio em caso de erro para evitar problemas de leitura
+    };
+};
+
 
 document.getElementById('exclusao-button').addEventListener('click', function(event){
     event.preventDefault();
@@ -128,4 +173,4 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
 function getParametroUrl(id) {
     const parametros = new URLSearchParams(window.location.search);
     return parametros.get(id);
-}
+};

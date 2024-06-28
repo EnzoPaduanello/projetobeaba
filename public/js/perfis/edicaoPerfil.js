@@ -1,74 +1,169 @@
-const perfis = JSON.parse(localStorage.getItem('perfis'));
-const modulos = JSON.parse(localStorage.getItem('modulos'));
-
-function getParametroUrl(name) {
-    const parametros = new URLSearchParams(window.location.search);
-    return parametros.get(name);
-}
-
-const valor = getParametroUrl('valor')
-console.log(valor)
-console.log(perfis)
-
-function preencherCampos(){
-    criarCheckbox()
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-
-    perfis[valor].modulos.forEach(modulo => {
-        checkboxes.forEach(checkbox => {
-        
-            if (checkbox.value === modulo) {
-                checkbox.checked = true;
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+        $('.dadosSelect').select2({
+            placeholder: "Selecione as funções"
         });
+    });
+
+    const id = getParametroUrl('id')
+    console.log(id)
+
+    fetch(`/api/perfis/${id}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha ao carregar perfil: ' + response.statusText);
+        }
+        return response.json();
     })
+    .then(data => {
+        carregarDados(data);
+    })
+    .catch(error => {
+        console.error('Erro ao carregar perfil:', error);
+        alert('Não foi possível carregar a perfil.');
+    });
+});
 
-   
-    document.getElementById("nameInput").value = perfis[valor].name;
-}
+function carregarDados(perfil){
+    document.getElementById("nomeInput").value = perfil.nomePerfil;
+    document.getElementById("descricaoInput").value = perfil.descricaoPerfil;
 
-function criarCheckbox(){
-    const moduloDiv = document.getElementById('checkbox-modulos');
-    moduloDiv.innerHTML = '';
-
-    if (modulos !== null) {
-        
-        modulos.forEach(function(modulo) {
-            if (modulo.name !== undefined){
-                const novoCheckbox = `<label><input type="checkbox" class="checkboxes-modulo" id="${modulo.name}-checkbox" value="${modulo.name}">${modulo.name}</input><label>`;
-                moduloDiv.insertAdjacentHTML('beforeend', novoCheckbox);
-            }
-            
+    const moduloSelect = document.getElementById("moduloSelect");
+    fetch('/api/modulos')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(modulo => {
+            let option = new Option(`${modulo.tagModulo} - ${modulo.nomeModulo}`, modulo.idModulo);
+            moduloSelect.add(option);
         });
-    } else {
-        console.log('Não há módulos armazenadas no localStorage.');
-    }
+    });
 }
 
 document.getElementById('edicao-perfil-button').addEventListener('click', function(event){
     event.preventDefault();
+    const id = getParametroUrl('id')
 
-    const name = document.getElementById('nameInput').value;
-    const nameUpperCase = name.toUpperCase();
+    const nomePerfil = document.getElementById('nomeInput').value;
+    const nomeUpperCase = nomePerfil.toUpperCase();
 
-    const modul = lerCheckboxes()
+    const descricaoPerfil = document.getElementById('descricaoInput').value;
 
-    perfis[valor] = {
-        name: nameUpperCase,
-        modulos: modul
+    perfilData = {
+        nomePerfil: nomeUpperCase,
+        descricaoPerfil: descricaoPerfil
     }
 
-    localStorage.setItem('perfis', JSON.stringify(perfis))
+    console.log('Dados: ' + perfilData)
 
-    exibirMensagem('Perfil editado com sucesso')
-    window.location.assign('../gerenciamento/gerenciamentoPerfis.html');
+    fetch(`/api/perfis/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(perfilData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Falha na requisição: ' + response.statusText);  // Lança um erro se a resposta não for OK
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Perfil editado com sucesso')
+            window.location.assign('/perfis/gerenciamento');
+        } else {
+            alert('Falha no cadastro: ' + data.message);  // Mostra uma mensagem de erro se não for bem-sucedido
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Falha no cadastro: ' + error.message);  // Mostra uma mensagem de erro em caso de falha na requisição
+    }); 
+
+    const modulos = document.getElementById("moduloSelect").value;
+
+    if (modulos === ""){
+        window.location.assign('/perfis/gerenciamento')
+    } else {
+        associarPerfilModulo();
+    }
 })
+
+async function carregarAssociacoesExistentes(idPerfil) {
+    try {
+        const response = await fetch(`/api/perfis/${idPerfil}/modulos`);
+        if (!response.ok) {
+            throw new Error('Falha ao carregar funções: ' + response.statusText);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        alert('Erro ao buscar funções associadas à funções');
+        return []; // Retorne um array vazio em caso de erro para evitar problemas de leitura
+    };
+};
+
+async function associarPerfilModulo() {
+    const perfilId = parseInt(getParametroUrl('id'), 10);
+    const modulosAssociados = await carregarAssociacoesExistentes(perfilId);
+    let modulosAceitos = [];
+    let modulosRecusados = [];
+
+    const selectedOptions = document.getElementById('funcaoSelect').selectedOptions;
+    const modulosIds = Array.from(selectedOptions).map(option => parseInt(option.value, 10));
+
+    console.log({ perfilId, modulosIds }); // Confirme que os dados estão corretos
+
+    const modulosAssociadosIds = new Set(modulosAssociados.map(funcao => funcao.idFuncao));
+
+    modulosIds.forEach((moduloId) => {
+        if (!modulosAssociadosIds.has(moduloId)) {
+            modulosAceitos.push(moduloId);
+        } else {
+            modulosRecusados.push(moduloId);
+        }
+    });
+
+    console.log({ modulosAceitos, modulosRecusados });
+
+    if (modulosAceitos.length > 0) {
+        try {
+            // Use Promise.all para fazer todas as requisições de uma vez
+            await Promise.all(modulosAceitos.map(async (moduloId) => {
+                console.log(`Associando função ${moduloId} à perfil ${perfilId}`);
+
+                const response = await fetch(`/api/transacoes/${perfilId}/funcoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idFuncao: moduloId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha na requisição: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                console.log('Success:', data);
+                window.location.assign('/associacoes/perfilModulo')
+            }));
+
+            alert('Todas as funções foram associadas com sucesso');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Falha ao associar: ' + error.message);
+        }
+    } else {
+        alert('Todas as funções selecionadas já estão cadastradas');
+    }
+}
 
 document.getElementById('exclusao-button').addEventListener('click', function(event){
     event.preventDefault();
 
     perfis[valor] = {
-        name: undefined,
+        nome: undefined,
         modulos: undefined
     }
 
@@ -78,26 +173,7 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
     window.location.assign('../gerenciamento/gerenciamentoPerfis.html');
 });
 
-function lerCheckboxes(){
-    
-    var checkboxes = document.querySelectorAll('.checkboxes-modulo');
-            valoresSelecionados = [];
-
-        checkboxes.forEach(function(checkbox) {
-            if (checkbox.checked) {
-                valoresSelecionados.push(checkbox.value);
-            }
-        });
-
-        return valoresSelecionados 
-}
-
-function exibirMensagem(mensagem) {
-    const mensagemDiv = document.getElementById("mensagem");
-    mensagemDiv.textContent = mensagem;
-    setTimeout(() => {
-        mensagemDiv.textContent = "";
-    }, 3000); 
-}
-
-preencherCampos();
+function getParametroUrl(id) {
+    const parametros = new URLSearchParams(window.location.search);
+    return parametros.get(id);
+};
