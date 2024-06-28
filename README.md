@@ -1,5 +1,8 @@
 # projetobeaba
 
-Todos os cadastros estão funcionando.
+Adicionados:
+Todos os cadastros.
+Todas as edições.
+Todas as associações
 
-No momento, eu estou terminando de construir as listas e as associações Muitos para Muitos de acordo com a normalização.
+No momento, eu estou trabalhando na criptografia de senha e login.
