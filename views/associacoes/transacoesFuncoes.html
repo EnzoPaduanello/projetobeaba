@@ -6,29 +6,31 @@
     <title>Lista de Associações</title>
     <link rel="stylesheet" href="/css/nav.css">
     <link rel="stylesheet" href="/css/cadastro.css">
+    <link rel="icon" href="/img/icone.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/icone.png" type="image/x-icon">
 </head>
 <body>
-    <header>
-        <div class="logo">
-          <a href="/"><img src="../img/quero-quero-logo.png" alt="Logo"></a>
-          </div>
-        <nav>
-          <ul class="menu">
-            <li><a href="/usuarios/gerenciamento"><button class="nav-button">Gerenciamento de Usuários</button></a></li>
-            <li><a href="/perfis/gerenciamento"><button class="nav-button">Gerenciamento de Perfis</button></a></li>
-            <li><a href="/modulos/gerenciamento"><button class="nav-button">Gerenciamento de Módulos</button></a></li>
-            <li><a href="/transacoes/gerenciamento"><button class="nav-button">Gerenciamento de Transações</button></a></li>
-            <li><a href="/funcoes/gerenciamento"><button class="nav-button">Gerenciamento de Funções</button></a></li>
-            <li><a><button class="nav-button" id="logout-button">Logout</button></a></li>
-          </ul>
-        </nav>
-
-        <div class="menu-toggle">
-          <div class="hamburger"></div>
-          <div class="hamburger"></div>
-          <div class="hamburger"></div>
-        </div>
-    </header>
+  <header>
+    <div class="logo">
+      <a href="/"><img src="../img/quero-quero-logo.png" alt="Logo"></a>
+      </div>
+    <nav>
+      <ul class="menu">
+        <li><a id="usuariosNav"><button class="nav-button" id="usuarios">Gerenciamento de Usuários</button></a></li>
+        <li><a id="perfisNav"><button class="nav-button" id="perfis">Gerenciamento de Perfis</button></a></li>
+        <li><a id="modulosNav"><button class="nav-button" id="modulos">Gerenciamento de Módulos</button></a></li>
+        <li><a id="transacoesNav"><button class="nav-button" id="transacoes">Gerenciamento de Transações</button></a></li>
+        <li><a id="funcoesNav"><button class="nav-button">Gerenciamento de Funções</button></a></li>
+        <li><a id="dashboardNav"><button class="nav-button">Dashboard</button></a></li>
+        <li><a id="logoutNav"><button class="nav-button">Logout</button></a></li>
+      </ul>
+    </nav>
+    <div class="menu-toggle">
+      <div class="hamburger"></div>
+      <div class="hamburger"></div>
+      <div class="hamburger"></div>
+    </div>
+  </header>
 
     <form class="form" id="edicaoTransacaoForm">
         <div class="container-form">
@@ -45,6 +47,7 @@
         </div>
     </form>
 
+    <script src="/js/autenticacao.js"></script>
     <script src="/js/nav.js"></script>
     <script src="/js/associacoes/transacaoFuncao.js"></script>
 </body>

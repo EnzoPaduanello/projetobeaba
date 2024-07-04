@@ -1,0 +1,20 @@
+[
+    {
+        "idFuncao": 1,
+        "tagFuncao": "ALTR",
+        "nomeFuncao": "ALTERAR",
+        "descricaoFuncao": ""
+    },
+    {
+        "idFuncao": 4,
+        "tagFuncao": "PRFA",
+        "nomeFuncao": "PRODUTO FATURA",
+        "descricaoFuncao": ""
+    },
+    {
+        "idFuncao": 5,
+        "tagFuncao": "INV",
+        "nomeFuncao": "INVESTIR",
+        "descricaoFuncao": ""
+    }
+]

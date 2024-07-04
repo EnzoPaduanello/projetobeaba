@@ -1,0 +1,12 @@
+[
+    {
+        "idPerfil": 2,
+        "nomePerfil": "ESTABELECIMENTO",
+        "descricaoPerfil": ""
+    },
+    {
+        "idPerfil": 3,
+        "nomePerfil": "ADMINISTRADOR",
+        "descricaoPerfil": "Adm"
+    }
+]

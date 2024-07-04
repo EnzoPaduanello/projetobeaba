@@ -1,35 +1,39 @@
-document.getElementById('usuarios').addEventListener('click', function(event){
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
 
-    window.location.href = '/usuarios/cadastro'
-});
+    document.getElementById('usuariosNav').addEventListener('click', function(event){
+        event.preventDefault();
 
-document.getElementById('perfis').addEventListener('click', function(event){
-    event.preventDefault();
+        window.location.href = '/usuarios/gerenciamento'
+    });
 
-    window.location.href = '../gerenciamento/gerenciamentoPerfis.html'
-});
+    document.getElementById('perfisNav').addEventListener('click', function(event){
+        event.preventDefault();
 
-document.getElementById('transacoes').addEventListener('click', function(event){
-    event.preventDefault();
+        window.location.href = '/perfis/gerenciamento'
+    });
 
-    window.location.href = '../gerenciamento/gerenciamentoTransacoes.html'
-});
+    document.getElementById('transacoesNav').addEventListener('click', function(event){
+        event.preventDefault();
 
-document.getElementById('modulos').addEventListener('click', function(event){
-    event.preventDefault();
+        window.location.href = '/transacoes/gerenciamento'
+    });
 
-    window.location.href = '../gerenciamento/gerenciamentoModulos.html'
-});
+    document.getElementById('modulosNav').addEventListener('click', function(event){
+        event.preventDefault();
 
-document.getElementById('funcoes').addEventListener('click', function(event){
-    event.preventDefault();
+        window.location.href = '/modulos/gerenciamento'
+    });
 
-    window.location.href = '../gerenciamento/gerenciamentoFuncoes.html'
-});
+    document.getElementById('funcoesNav').addEventListener('click', function(event){
+        event.preventDefault();
 
-document.getElementById('logout').addEventListener('click', function(event){
-    event.preventDefault();
+        window.location.href = '/funcoes/gerenciamento'
+    });
 
-    window.location.href = 'login.html'
-});
+    document.getElementById('logoutNav').addEventListener('click', function(event){
+        event.preventDefault();
+
+        localStorage.clear();
+        window.location.href = '/login'
+    });
+})

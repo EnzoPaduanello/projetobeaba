@@ -4,24 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/formularioLogin.css">
+    <link rel="icon" href="/img/icone.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/icone.png" type="image/x-icon">
     <title>Menu</title>
 </head>
 <body>
     <div id="pageDiv">
         <div id="formularioContainer" class="container">
-            <div id="divFormularioFundo">
-            
+            <div id="divFormularioFundo">      
                 <ul class="menu">
-                    <li><a href="/usuarios/gerenciamento"><button class="nav-button" id="usuarios">Gerenciamento de Usuários</button></a></li>
-                    <li><a href="gerenciamento/gerenciamentoModulos.html"><button class="nav-button" id="modulos">Gerenciamento de Módulos</button></a></li>
-                    <li><a href="gerenciamento/gerenciamentoPerfis.html"><button class="nav-button" id="perfis">Gerenciamento de Perfis</button></a></li>
-                    <li><a href="/transacoes/gerenciamento"><button class="nav-button" id="transacoes">Gerenciamento de Transações</button></a></li>
-                    <li><a href="/funcoes/gerenciamento"><button class="nav-button" id="funcoes">Gerenciamento de Funções</button></a></li>
-                    <li><a href="index.html"><button class="nav-button" id="logout">Logout</button></a></li>
+                    <li><a id="usuariosNav"><button class="nav-button" id="usuarios">Gerenciamento de Usuários</button></a></li>
+                    <li><a id="perfisNav"><button class="nav-button" id="perfis">Gerenciamento de Perfis</button></a></li>
+                    <li><a id="modulosNav"><button class="nav-button" id="modulos">Gerenciamento de Módulos</button></a></li>
+                    <li><a id="transacoesNav"><button class="nav-button" id="transacoes">Gerenciamento de Transações</button></a></li>
+                    <li><a id="funcoesNav"><button class="nav-button" id="funcoes">Gerenciamento de Funções</button></a></li>
+                    <li><a id="logoutNav"><button class="nav-button" id="logout">Logout</button></a></li>
                 </ul>
-           
             </div>
         </div>
     </div>
+    <script src="/js/autenticacao.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 </html>

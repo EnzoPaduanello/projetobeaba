@@ -90,6 +90,37 @@ body {
     background-color: rgb(153, 4, 4);
 }
 
+.download-json-button{
+    margin-left: 10px;
+    margin-right: 5px;
+    width: 250px;
+    height: 60px;
+    background-color: #b69b00;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.download-xlsx-button{
+    margin-left: 5px;
+    width: 250px;
+    height: 60px;
+    background-color: #158F42;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
 .submit-button:hover {
     background-color: #1FB255;
 }
@@ -116,6 +147,7 @@ body {
         margin-top: -17px
     }
 }
+
 .select-div{
     display: flex;
     justify-content: center;  /* Centraliza horizontalmente */
@@ -282,4 +314,39 @@ body {
     justify-content: center;
     max-width: 715px;
     width: 90% auto;
+}
+
+.relatorios-container {
+    display: flex; /* Utiliza flexbox para alinhar os itens */
+    justify-content: center; /* Centraliza os itens horizontalmente */
+    align-items: center; /* Centraliza os itens verticalmente */
+    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha quando não couberem mais */
+}
+
+.graficoPizza, .graficoBarras {
+    width: 35%; /* Define a largura inicial das imagens */
+    height: auto; /* Mantém a proporção da imagem */
+    margin: 10px; /* Espaçamento entre as imagens */
+}
+
+.graficoPizza{
+    margin-left: -10px;
+}
+
+@media (max-width: 1250px) {
+    .graficoPizza, .graficoBarras {
+        width: 50%; /* Define uma largura maior para as imagens */
+    }
+}
+
+@media (max-width: 800px) {
+    .graficoPizza, .graficoBarras {
+        width: 65%; /* Define uma largura maior para as imagens */
+    }
+}
+
+@media (max-width: 500px) {
+    .graficoPizza, .graficoBarras {
+        width: 90%; /* Define uma largura maior para as imagens */
+    }
 }

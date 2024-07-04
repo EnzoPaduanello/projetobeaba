@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    //checkAuth();
+
     //Obtendo o id pelo url da pagina
     const idTransacao = parseInt(getParametroUrl('id'), 10);
 
@@ -92,7 +94,7 @@ function criarListas(funcoes){
             const confirmed = confirm('Tem certeza que deseja excluir esta função?');
             if (confirmed) {
                 try {
-                    const response = await fetch('/api/transacoes/' + transacaoFuncao.idTransacaoFuncao , {
+                    const response = await fetch(`/api/transacoes/${transacaoFuncao.idTransacaoFuncao}/funcoes` , {
                         method: 'DELETE'
                     });
                     if (response.ok) {
@@ -120,7 +122,8 @@ function criarListas(funcoes){
 
 document.getElementById('cadastrarAssociacao').addEventListener('click', function (event) {
     event.preventDefault();
-    window.location.assign('/transacoes/edicao')
+    const id = getParametroUrl('id')
+    window.location.assign('/transacoes/edicao?id='+id)
 })
 
 document.getElementById('gerenciarTransacao').addEventListener('click', function (event) {

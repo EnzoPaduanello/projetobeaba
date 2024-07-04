@@ -58,27 +58,20 @@ create table public.perfis_modulos (
 	id_modulo integer not null references public.modulos(id_modulo)
 );
 
-SELECT pg_get_serial_sequence('funcoes', 'id_funcao');
-ALTER SEQUENCE funcoes_id_funcao_seq RESTART WITH 1;
-
-UPDATE funcoes
-SET descricao_funcao = 'Adicionar'
-WHERE nome_funcao = 'ADAT';
-
-select * from funcoes f; 
+select * from usuarios u;
 select * from perfis p; 
+select * from modulos m;
+select * from transacoes t;
+select * from funcoes f; 
+select * from perfis_modulos pm; 
+select * from modulos_funcoes mf; 
+select * from transacoes_funcoes tf;
 
-drop table usuarios;
-drop table perfis; 
-drop table modulos;
-drop table transacoes; 
-drop table funcoes; 
-drop table transacoes_funcoes; 
-drop table perfis_modulos; 
-drop table modulos_funcoes; 
-
-
-
-
-
-
+-- drop table usuarios;
+-- drop table perfis; 
+-- drop table modulos;
+-- drop table transacoes; 
+-- drop table funcoes; 
+-- drop table perfis_modulos; 
+-- drop table modulos_funcoes; 
+-- drop table transacoes_funcoes; 

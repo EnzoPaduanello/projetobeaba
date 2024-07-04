@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    //Obtendo o id pelo url da pagina
     const idModulo = parseInt(getParametroUrl('id'), 10);
 
-    //Criando o título da página
     fetch(`/api/modulos/${idModulo}`)
     .then(response => {
         if (!response.ok) {
@@ -19,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Não foi possível carregar a transação.');
     });
 
-    //Carregando os dados das listas
     try {
         fetch(`/api/modulos/${idModulo}/funcoes`)
         .then(response => {
@@ -37,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
-function criarListas(funcoes){
+function criarListas(funcoes) {
     const idModulo = getParametroUrl('id');
     const divLista = document.getElementById('list-div');
 
@@ -46,8 +43,8 @@ function criarListas(funcoes){
     }
 
     funcoes.forEach(funcao => {
-        const aElement = document.createElement('a')
-        aElement.href = '/funcoes/edicao?id=' + funcao.idFuncao
+        const aElement = document.createElement('a');
+        aElement.href = '/funcoes/edicao?id=' + funcao.idFuncao;
 
         const ulElement = document.createElement('ul');
         ulElement.id = funcao.idFuncao;
@@ -56,21 +53,18 @@ function criarListas(funcoes){
         const lTag = document.createElement('li');
         const lNome = document.createElement('li');
         const lDescricao = document.createElement('li');
-        
-        lTag.textContent = 'Tag: ' + funcao.tagFuncao
-        lNome.textContent = 'Nome: ' + funcao.nomeFuncao;
-        lDescricao.textContent = 'Descrição: ' + funcao.descricaoFuncao
 
-        // Criação do botão de exclusão com imagem
+        lTag.textContent = 'Tag: ' + funcao.tagFuncao;
+        lNome.textContent = 'Nome: ' + funcao.nomeFuncao;
+        lDescricao.textContent = 'Descrição: ' + funcao.descricaoFuncao;
+
         const deleteButton = document.createElement('button');
         deleteButton.className = 'delete-button';
         const deleteImg = document.createElement('img');
-        deleteImg.src = '/img/icon-exclusao-100.png';  // Substitua pelo caminho da sua imagem
+        deleteImg.src = '/img/icon-exclusao-100.png';
         deleteImg.alt = 'Delete';
         deleteButton.appendChild(deleteImg);
 
-        let moduloFuncao
-        
         fetch(`/api/modulos/${idModulo}/funcoes/${funcao.idFuncao}`)
         .then(response => {
             if (!response.ok) {
@@ -79,54 +73,57 @@ function criarListas(funcoes){
             return response.json();
         })
         .then(data => {
-            moduloFuncao = data
+            const moduloFuncao = data.idModuloFuncao;
+
+            console.log(moduloFuncao)
+
+            deleteButton.addEventListener('click', async (event) => {
+                event.preventDefault();
+
+                const confirmed = confirm('Tem certeza que deseja excluir esta função?');
+                if (confirmed) {
+                    try {
+                        const response = await fetch(`/api/modulos/${moduloFuncao}/funcoes`, {
+                            method: 'DELETE'
+                        });
+                        if (response.ok) {
+                            ulElement.remove();
+                        } else {
+                            alert('Erro ao excluir a associação.');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir a associação:', error);
+                        alert('Erro ao excluir a associação.');
+                    }
+                }
+            });
         })
         .catch(error => {
             console.error('Erro ao carregar transação:', error);
             alert('Não foi possível carregar a transação.');
         });
 
-        deleteButton.addEventListener('click', async (event) => {
-            event.preventDefault();
-
-            const confirmed = confirm('Tem certeza que deseja excluir esta função?');
-            if (confirmed) {
-                try {
-                    const response = await fetch('/api/modulos/' + moduloFuncao.idModuloFuncao , {
-                        method: 'DELETE'
-                    });
-                    if (response.ok) {
-                        ulElement.remove();
-                    } else {
-                        alert('Erro ao excluir a associação.');
-                    }
-                } catch (error) {
-                    console.error('Erro ao excluir a associação:', error);
-                    alert('Erro ao excluir a associação.');
-                }
-            }
-        });
-
         ulElement.appendChild(lTag);
         ulElement.appendChild(lNome);
         ulElement.appendChild(lDescricao);
-        ulElement.appendChild(deleteButton)
+        ulElement.appendChild(deleteButton);
 
-        aElement.appendChild(ulElement)
+        aElement.appendChild(ulElement);
 
         divLista.appendChild(aElement);
     });
 }
 
-document.getElementById('cadastrarAssociacao').addEventListener('click', function (event) {
+document.getElementById('cadastrarAssociacao').addEventListener('click', function(event) {
     event.preventDefault();
-    window.location.assign('/modulos/edicao')
-})
+    const id = getParametroUrl('id')
+    window.location.assign('/modulos/edicao?id='+id);
+});
 
-document.getElementById('gerenciarTransacao').addEventListener('click', function (event) {
+document.getElementById('gerenciarModulos').addEventListener('click', function(event) {
     event.preventDefault();
-    window.location.assign('/modulos/gerenciamento')
-})
+    window.location.assign('/modulos/gerenciamento');
+});
 
 function getParametroUrl(id) {
     const parametros = new URLSearchParams(window.location.search);

@@ -9,7 +9,7 @@ const PerfilModulo = sequelize.define('PerfilModulo', {
         autoIncrement: true,
         field: 'id'
     },
-    idPerfis:{
+    idPerfil:{
         type: DataTypes.INTEGER,
         allowNull: false,
         references:{

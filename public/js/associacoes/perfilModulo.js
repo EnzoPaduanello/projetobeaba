@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    //checkAuth();
+
     //Obtendo o id pelo url da pagina
     const idPerfil = parseInt(getParametroUrl('id'), 10);
 
@@ -12,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(data => {
         const titulo = document.getElementById('titulo-lista')
-        titulo.textContent = `Lista de associações de ${data.nomeModulo} (${data.tagModulo})`
+        titulo.textContent = `Lista de associações de ${data.nomePerfil}`
     })
     .catch(error => {
         console.error('Erro ao carregar perfil:', error);
@@ -89,10 +91,11 @@ function criarListas(modulos){
         deleteButton.addEventListener('click', async (event) => {
             event.preventDefault();
 
+            console.log(perfilModulo.idPerfilModulo)
             const confirmed = confirm('Tem certeza que deseja excluir esta função?');
             if (confirmed) {
                 try {
-                    const response = await fetch('/api/perfis/' + perfilModulo.idPerfilFuncao , {
+                    const response = await fetch(`/api/perfis/${perfilModulo.idPerfilModulo}/modulos`, {
                         method: 'DELETE'
                     });
                     if (response.ok) {
@@ -120,7 +123,9 @@ function criarListas(modulos){
 
 document.getElementById('cadastrarAssociacao').addEventListener('click', function (event) {
     event.preventDefault();
-    window.location.assign('/perfis/edicao')
+    const idPerfil = getParametroUrl('id');
+
+    window.location.assign('/perfis/edicao?id='+idPerfil)
 })
 
 document.getElementById('gerenciarPerfil').addEventListener('click', function (event) {

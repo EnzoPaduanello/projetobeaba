@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edição de Módulos</title>
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/cadastro.css">
+    <link rel="stylesheet" href="/node_modules/select2/dist/css/select2.min.css">
+    <link rel="icon" href="/img/icone.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/icone.png" type="image/x-icon">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="/"><img src="../img/quero-quero-logo.png" alt="Logo"></a>
+      </div>
+    <nav>
+      <ul class="menu">
+        <li><a id="usuariosNav"><button class="nav-button" id="usuarios">Gerenciamento de Usuários</button></a></li>
+        <li><a id="perfisNav"><button class="nav-button" id="perfis">Gerenciamento de Perfis</button></a></li>
+        <li><a id="modulosNav"><button class="nav-button" id="modulos">Gerenciamento de Módulos</button></a></li>
+        <li><a id="transacoesNav"><button class="nav-button" id="transacoes">Gerenciamento de Transações</button></a></li>
+        <li><a id="funcoesNav"><button class="nav-button">Gerenciamento de Funções</button></a></li>
+        <li><a id="dashboardNav"><button class="nav-button">Dashboard</button></a></li>
+        <li><a id="logoutNav"><button class="nav-button">Logout</button></a></li>
+      </ul>
+    </nav>
+    <div class="menu-toggle">
+      <div class="hamburger"></div>
+      <div class="hamburger"></div>
+      <div class="hamburger"></div>
+    </div>
+  </header>
+
+    <form class="form" id="cadastroModuloForm">
+        <div class="container-form">
+            <div class="content">
+
+              <h1>Edição de Módulos</h1>
+              <br>
+              <input class="idInput">
+
+              <div class="input-group">
+                <label for="tagInput" class="label">TAG</label>
+                <input id="tagInput" class="input" type="text" placeholder="Tag do Módulo" required>
+              </div>
+
+              <div class="input-group">
+                  <label for="nomeInput" class="label">Nome do Módulo</label>
+                  <input id="nomeInput" class="input" type="text" placeholder="Nome Completo" required>
+              </div>
+          
+              <div class="input-group">
+                  <label for="descricaoInput" class="label">Descrição</label>
+                  <input id="descricaoInput" class="input" type="text">
+              </div>
+
+                <h3>Associar Transação</h3><br>
+                <div class="select-div">
+                    <select class="dadosSelect" id="transacaoSelect">
+                        <option value="">Selecione uma transação</option>
+                    </select>
+                </div>
+
+                <h3>Associar função</h3><br>
+                <div class="select-div">
+                    <select class="dadosSelect" id="funcaoSelect" multiple="multiple">
+                        <option value="">Selecione uma função</option>
+                    </select>
+                </div>
+                
+                <div class="button-container">
+                    <button type="submit" class="submit-button" id="edicao-modulo-button">Enviar</button>
+                    <button type="submit" class="submit-button" id="exclusao-button">Excluir</button>
+                </div>
+                <div class="button-container">
+                    <button class="navigationButton" id="ver-associacao-button">Ver Associações existentes</button>
+                </div>
+
+                <div id="mensagem"></div>
+            </div>
+        </div>
+    </form>
+
+    <script src="/js/autenticacao.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/select2/dist/js/select2.min.js"></script>
+    <script src="/js/nav.js"></script>
+    <script src="/js/modulos/edicaoModulos.js"></script>
+</body>
+</html>

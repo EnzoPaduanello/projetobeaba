@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/formularioLogin.css">
+    <title>Esqueci a Senha</title>
+    <link rel="icon" href="/img/icone.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/icone.png" type="image/x-icon">
+</head>
+<body>
+    <div id="pageDiv">
+        <div id="formularioContainer" class="container">
+            <form id="recuperarForm">
+                <div id="descricaoPaginaDiv">
+                    <p id="descricaoPagina">Digite a sua matricula para o envio do email de recuperação da senha</p>
+                </div>
+                <br>
+
+                <label id="matriculaLabel" for="matriculaInput">Matrícula</label><br/>
+                <input id="matriculaInput">
+                
+                <button id="recuperarSenhaButton" type="submit">Recuperar Senha</button>
+                <a href="/login"><p id="voltarPaginaLogin">Voltar à página de login</p></a>
+
+                <div id="mensagem"></div>
+            </form>
+        </div>
+    </div>
+    <script src="../js/esqueciASenha.js"></script>
+</body>
+</html>
