@@ -1,3 +1,5 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
     //checkAuth();
 
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/modulos', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(moduloData)

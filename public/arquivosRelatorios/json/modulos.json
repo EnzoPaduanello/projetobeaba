@@ -1,0 +1,16 @@
+[
+    {
+        "idModulo": 1,
+        "tagModulo": "SC",
+        "nomeModulo": "VERDECARD",
+        "descricaoModulo": "",
+        "idTransacao": 2
+    },
+    {
+        "idModulo": 2,
+        "tagModulo": "ADM",
+        "nomeModulo": "ADMINISTRADOR",
+        "descricaoModulo": "Adm",
+        "idTransacao": 4
+    }
+]

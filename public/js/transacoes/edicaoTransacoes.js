@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
     $(document).ready(function() {
         $('.dadosSelect').select2({
             placeholder: "Selecione as funções"
@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const id = getParametroUrl('id')
     console.log(id)
 
-    fetch(`/api/transacoes/${id}`)
+    fetch(`/api/transacoes/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar transação: ' + response.statusText);
@@ -51,6 +55,7 @@ document.getElementById('edicao-transacao-button').addEventListener('click', fun
             fetch(`/api/transacoes/${idTransacao}`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(transacaoData)
@@ -90,7 +95,11 @@ function carregarDados(transacao){
     document.getElementById("descricaoInput").value = transacao.descricaoTransacao;
 
     const funcaoSelect = document.getElementById("funcaoSelect");
-    fetch('/api/funcoes')
+    fetch('/api/funcoes', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => response.json())
     .then(data => {
         data.forEach(funcao => {
@@ -131,7 +140,10 @@ async function associarTransacaoFuncao() {
 
                 const response = await fetch(`/api/transacoes/${transacaoId}/funcoes`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json' 
+                    },
                     body: JSON.stringify({ idFuncao: funcaoId })
                 });
 
@@ -156,7 +168,11 @@ async function associarTransacaoFuncao() {
 
 async function carregarAssociacoesExistentes(idTransacao) {
     try {
-        const response = await fetch(`/api/transacoes/${idTransacao}/funcoes`);
+        const response = await fetch(`/api/transacoes/${idTransacao}/funcoes`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Falha ao carregar funções: ' + response.statusText);
         }
@@ -179,6 +195,9 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
         if (confirmed) {
             fetch(`/api/transacoes/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
             .then(response => {
                 if (!response.ok) {

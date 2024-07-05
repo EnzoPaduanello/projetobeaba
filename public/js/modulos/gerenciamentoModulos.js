@@ -1,7 +1,13 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function(){
     let modulos;
 
-    fetch('/api/modulos')
+    fetch('/api/modulos', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar módulos: ' + response.statusText);

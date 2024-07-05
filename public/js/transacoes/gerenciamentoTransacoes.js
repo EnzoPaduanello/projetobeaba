@@ -1,7 +1,13 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
     let transacoes;
 
-    fetch('/api/transacoes')
+    fetch('/api/transacoes', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar transações: ' + response.statusText);

@@ -65,8 +65,8 @@ nav ul li a .nav-button:hover {
       display: none;
       position: absolute;
       top: 100%; /* Ajustado para abrir abaixo do cabeçalho */
-      left: 0;
-      width: 100%;
+      right: 0;
+      width: 35%;
       background-color: #1b9648;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       padding: 0; /* Removido para evitar sobreposição de padding */
@@ -75,6 +75,7 @@ nav ul li a .nav-button:hover {
   nav ul.open {
       display: flex;
       flex-direction: column;
+      border-radius: 10px;
   }
   nav ul li {
     margin-top: 5px;
@@ -120,5 +121,24 @@ nav ul li a .nav-button:hover {
   .logo {
       width: 294px;
       height: 73px;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  nav ul.open {
+    width: 40%;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  nav ul.open {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  nav ul.open {
+    width: 100%;
+    border-radius: 0px;
   }
 }

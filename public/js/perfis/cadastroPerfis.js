@@ -1,3 +1,5 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
     //checkAuth();
 
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/perfis', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(perfilData)

@@ -1,11 +1,15 @@
-document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
     //Obtendo o id pelo url da pagina
     const idPerfil = parseInt(getParametroUrl('id'), 10);
 
     //Criando o título da página
-    fetch(`/api/perfis/${idPerfil}`)
+    fetch(`/api/perfis/${idPerfil}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar nome do perfil: ' + response.statusText);
@@ -23,7 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //Carregando os dados das listas
     try {
-        fetch(`/api/perfis/${idPerfil}/modulos`)
+        fetch(`/api/perfis/${idPerfil}/modulos`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha ao carregar funções: ' + response.statusText);
@@ -73,7 +81,11 @@ function criarListas(modulos){
 
         let perfilModulo
         
-        fetch(`/api/perfis/${idPerfil}/modulos/${modulo.idModulo}`)
+        fetch(`/api/perfis/${idPerfil}/modulos/${modulo.idModulo}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha ao carregar nome da perfil: ' + response.statusText);
@@ -96,7 +108,10 @@ function criarListas(modulos){
             if (confirmed) {
                 try {
                     const response = await fetch(`/api/perfis/${perfilModulo.idPerfilModulo}/modulos`, {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
                     });
                     if (response.ok) {
                         ulElement.remove();

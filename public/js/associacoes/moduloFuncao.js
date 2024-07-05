@@ -1,7 +1,13 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
     const idModulo = parseInt(getParametroUrl('id'), 10);
 
-    fetch(`/api/modulos/${idModulo}`)
+    fetch(`/api/modulos/${idModulo}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar nome da transação: ' + response.statusText);
@@ -65,7 +71,11 @@ function criarListas(funcoes) {
         deleteImg.alt = 'Delete';
         deleteButton.appendChild(deleteImg);
 
-        fetch(`/api/modulos/${idModulo}/funcoes/${funcao.idFuncao}`)
+        fetch(`/api/modulos/${idModulo}/funcoes/${funcao.idFuncao}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha ao carregar nome da transação: ' + response.statusText);
@@ -84,7 +94,10 @@ function criarListas(funcoes) {
                 if (confirmed) {
                     try {
                         const response = await fetch(`/api/modulos/${moduloFuncao}/funcoes`, {
-                            method: 'DELETE'
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
                         });
                         if (response.ok) {
                             ulElement.remove();

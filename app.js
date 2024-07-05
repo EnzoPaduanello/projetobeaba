@@ -24,6 +24,7 @@ const funcoesController = require('./controllers/funcoesController');
 const loginController = require('./controllers/loginController');
 const esqueciASenhaController = require('./controllers/esqueciASenhaController');
 const gerarRelatoriosController = require('./controllers/gerarRelatoriosController');
+const authorize = require('./middlewares/authMiddleware');
 
 const associarPerfilModulo = require('./controllers/associacoes/perfilModuloController');
 const associarModuloFuncao = require('./controllers/associacoes/moduloFuncaoController');
@@ -85,24 +86,18 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 
-app.post('/api/esqueciASenha/enviarEmail', esqueciASenhaController.sendEmail);
-
-// Rota para gerar o gráfico
-app.post('/api/gerarRelatorios', gerarRelatoriosController.gerarRelatorios);
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'login.html'))
+// Middleware de autenticação para todas as rotas API, exceto /api/login e /api/esqueciASenha
+app.use('/api', (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    if (req.path === '/login' || req.path === '/esqueciASenha/enviarEmail' || '/gerarRelatorios') {
+        // Ignora a autenticação para /api/login e /api/esqueciASenha/enviarEmail
+        next();
+    } else if (authHeader) {
+        authorize(req, res, next); // Aplica o middleware de autenticação para outras rotas /api
+    } else {
+        return res.status(401).json({ message: 'Token não fornecido' });
+    }
 });
-
-app.get('/esqueciASenha', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'esqueciASenha.html'))
-});
-
-app.get('/recuperarSenha', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'recuperarSenha.html'))
-});
-
-// Aplica o middleware de autenticação a todas as rotas abaixo
 
 //Rotas para associar o app com os controllers principais
 app.use('/api', usuariosController);
@@ -117,6 +112,11 @@ app.use('/api', loginController);
 app.use('/api', associarPerfilModulo);
 app.use('/api', associarModuloFuncao);
 app.use('/api', associarTransacaoFuncao);
+
+//Rota para envio de email
+app.post('/api/esqueciASenha/enviarEmail', esqueciASenhaController.sendEmail);
+// Rota para gerar o gráfico
+app.post('/api/gerarRelatorios', gerarRelatoriosController.gerarRelatorios);
 
 //Rota para gerar os graficos na página de dashboard
 app.get('/api/gerarRelatorios', (req, res) => {
@@ -140,6 +140,17 @@ app.get('/api/gerarRelatorios', (req, res) => {
         // Se tudo ocorrer bem, retorna sucesso
         console.log(`Gráfico gerado com sucesso: ${stdout}`);
         res.send('Gráfico gerado com sucesso!');
+    });
+});
+
+// Rota para download do arquivo XLSX
+app.get('/download', (req, res) => {
+    const file = path.join(__dirname, 'dados.xlsx');
+    res.download(file, 'dados.xlsx', (err) => {
+        if (err) {
+            console.log('Erro ao fazer o download:', err);
+            res.status(500).send('Erro ao fazer o download do arquivo.');
+        }
     });
 });
 
@@ -227,6 +238,18 @@ app.get('/associacoes/transacaoFuncao', (req, res) => {
 
 app.get('/dashboards', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'dashboard.html'))
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'login.html'))
+})
+
+app.get('/esqueciASenha', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'esqueciASenha.html'))
+});
+
+app.get('/recuperarSenha', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'recuperarSenha.html'))
 });
 
 // Middleware para tratamento de erros

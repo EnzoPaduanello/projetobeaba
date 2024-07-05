@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const response = await fetch('/api/gerarRelatorios', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 usuariosCount: usuariosCount,
@@ -69,26 +69,28 @@ async function carregarDados(tabela) {
 }
 
 document.getElementById('downloadXlsx').addEventListener('click', function(event){
-    event.preventDefault()
-    // URL do arquivo que deseja baixar
-    const url = '../arquivosRelatorios/dados.xlsx';
-
-    // Cria um link temporário
-    const link = document.createElement('a');
-    link.href = url;
-
-    // Define o nome do arquivo que será baixado
-    link.setAttribute('download', 'dados.xlsx');
-
-    // Esconde o link do HTML
-    link.style.display = 'none';
-
-    // Adiciona o link ao documento HTML
-    document.body.appendChild(link);
-
-    // Simula um clique no link para iniciar o download
-    link.click();
-
-    // Remove o link do documento HTML após o download
-    document.body.removeChild(link);
-})
+    event.preventDefault();
+    fetch('/download')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao baixar o arquivo');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'dados.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    })
+    .catch(error => {
+        console.error('Erro durante o download:', error);
+        alert('Não foi possível baixar o arquivo.');
+    });
+});

@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
     $(document).ready(function() {
         $('.dadosSelect').select2({
             placeholder: "Selecione as funções"
@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const id = getParametroUrl('id')
     console.log(id)
 
-    fetch(`/api/modulos/${id}`)
+    fetch(`/api/modulos/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar modulo: ' + response.statusText);
@@ -39,7 +43,11 @@ async function carregarDados(modulo){
 
     async function criarOpcoesTransacao(transacaoSelect, selectedTransacaoId){
         try {
-            const response = await fetch('/api/transacoes');
+            const response = await fetch('/api/transacoes', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (!response.ok) {
                 throw new Error('Falha ao carregar transações: ' + response.statusText);
             }
@@ -60,7 +68,11 @@ async function carregarDados(modulo){
     };
 
     const funcaoSelect = document.getElementById("funcaoSelect");
-    fetch('/api/funcoes')
+    fetch('/api/funcoes', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => response.json())
     .then(data => {
         data.forEach(funcao => {
@@ -106,6 +118,7 @@ document.getElementById('edicao-modulo-button').addEventListener('click', functi
             fetch(`/api/modulos/${idModulo}`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(moduloData)
@@ -170,7 +183,10 @@ async function associarModuloFuncao(){
 
                 const response = await fetch(`/api/modulos/${moduloId}/funcoes`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json' 
+                    },
                     body: JSON.stringify({ idFuncao: funcaoId })
                 });
 
@@ -195,7 +211,11 @@ async function associarModuloFuncao(){
 
 async function carregarAssociacoesExistentes(idModulo) {
     try {
-        const response = await fetch(`/api/modulos/${idModulo}/funcoes`);
+        const response = await fetch(`/api/modulos/${idModulo}/funcoes`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Falha ao carregar funções: ' + response.statusText);
         }
@@ -216,6 +236,9 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
         if (confirmed) {
             fetch(`/api/modulos/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
             .then(response => {
                 if (!response.ok) {

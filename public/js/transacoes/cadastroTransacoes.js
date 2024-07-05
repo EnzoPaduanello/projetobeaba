@@ -1,3 +1,5 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById("cadastroTransacaoForm")
 
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/transacoes', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(transacaoData)

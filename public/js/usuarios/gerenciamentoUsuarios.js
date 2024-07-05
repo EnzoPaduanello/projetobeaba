@@ -1,8 +1,14 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
     let usuarios; 
 
     // Carrega os usuários ao carregar a página
-    fetch('/api/usuarios')
+    fetch('/api/usuarios', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar usuários: ' + response.statusText);
@@ -36,7 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             const usuariosFiltrados = usuarios.filter(usuario => 
                 usuario.username.toUpperCase() === pesquisaUpperCase || 
-                usuario.matricula.toString() === pesquisaUpperCase
+                usuario.matricula.toString() === pesquisaUpperCase ||
+                usuario.email.toUpperCase() === pesquisaUpperCase
             );
             criarListaUsuarios(usuariosFiltrados); // Mostra os usuários filtrados pela pesquisa
         }

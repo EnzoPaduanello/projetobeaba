@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = '/funcoes/gerenciamento'
     });
 
+    document.getElementById('dashboardNav').addEventListener('click', function(event){
+        event.preventDefault();
+
+        window.location.href = '/dashboards'
+    });
+
     document.getElementById('logoutNav').addEventListener('click', function(event){
         event.preventDefault();
 

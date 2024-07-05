@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById("cadastroFuncaoForm")
 
     form.addEventListener("submit", function(event) {
@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/funcoes', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(funcaoData)

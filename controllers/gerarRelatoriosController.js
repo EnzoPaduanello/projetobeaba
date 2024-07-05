@@ -1,7 +1,6 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const archiver = require('archiver');
 
 const gerarRelatorios = async (req, res) => {
     // Recupera os dados do corpo da requisição
@@ -70,8 +69,6 @@ function criarJson(dadosUsuarios, dadosPerfis, dadosModulos, dadosTransacoes, da
     escreverArquivo('modulos.json', dadosOrdenados.modulos);
     escreverArquivo('transacoes.json', dadosOrdenados.transacoes);
     escreverArquivo('funcoes.json', dadosOrdenados.funcoes);
-
-    criarPastaZipJson()
 }
 
 module.exports = {

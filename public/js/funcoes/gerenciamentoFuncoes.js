@@ -1,7 +1,13 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function(){
     let funcoes;
 
-    fetch('/api/funcoes')
+    fetch('/api/funcoes', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar usuários: ' + response.statusText);
@@ -78,7 +84,7 @@ document.getElementById('pesquisa-button').addEventListener('click', function(ev
     if (pesquisaUpperCase === '') {
         criarListaFuncoes(funcoes);
     } else {
-        const funcoesFiltrados = funcoes.filter(funcao => funcao.name === pesquisaUpperCase || (funcao.descricao && funcao.descricao.toUpperCase() == pesquisaUpperCase));
+        const funcoesFiltrados = funcoes.filter(funcao => funcao.nomeFuncao === pesquisaUpperCase || funcao.descricaoFuncao.toUpperCase() == pesquisaUpperCase);
         criarListaFuncoes(funcoesFiltrados);
     }
 });

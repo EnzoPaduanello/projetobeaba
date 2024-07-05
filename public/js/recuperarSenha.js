@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         localStorage.clear()
-                        alert('Email editado com sucesso')
+                        alert('Senha editada com sucesso')
                         window.location.assign('/login');
                     } else {
                         alert('Falha no cadastro: ' + data.message);  // Mostra uma mensagem de erro se não for bem-sucedido

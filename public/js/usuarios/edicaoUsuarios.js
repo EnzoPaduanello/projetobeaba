@@ -1,11 +1,20 @@
-document.addEventListener('DOMContentLoaded', function() {
-    let senhaUsuario = ''
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+        $('.dadosSelect').select2({
+            placeholder: "Selecione os perfis"
+        });
+    });
 
     const id = getParametroUrl('id')
     console.log(id)
 
-    fetch(`/api/usuarios/${id}`)
+    fetch(`/api/usuarios/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar usuario: ' + response.statusText);
@@ -33,7 +42,11 @@ async function carregarDados(usuario){
 
     async function criarOpcoesPerfil(perfilSelect, selectedPerfilId){
         try {
-            const response = await fetch('/api/perfis');
+            const response = await fetch('/api/perfis', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (!response.ok) {
                 throw new Error('Falha ao carregar perfis: ' + response.statusText);
             }
@@ -53,29 +66,6 @@ async function carregarDados(usuario){
         }
     };
 }
-
-
-function criarOpcoesPerfil(){
-    // Carrega os perfis e adiciona ao select
-    fetch('/api/perfis')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Falha ao carregar perfis: ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        const perfilSelect = document.getElementById('dadosSelect');
-        data.forEach(perfil => {
-            let option = new Option(perfil.nomePerfil, perfil.idPerfil); // nomePerfil como texto, idPerfil como valor
-            perfilSelect.add(option);
-        });
-    })
-    .catch(error => {
-        console.error('Erro ao carregar perfis:', error);
-        alert('Não foi possível carregar os perfis.');
-    });
-};
 
 document.getElementById('edicao-usuario-button').addEventListener('click', function(event) {
     event.preventDefault();
@@ -110,6 +100,7 @@ document.getElementById('edicao-usuario-button').addEventListener('click', funct
             fetch(`/api/usuarios/${idUsuario}`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(usuarioData)
@@ -144,6 +135,9 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
         if (confirmed) {
             fetch(`/api/usuarios/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
             .then(response => {
                 if (!response.ok) {

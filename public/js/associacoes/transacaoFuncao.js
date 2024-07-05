@@ -1,11 +1,15 @@
-document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
     //Obtendo o id pelo url da pagina
     const idTransacao = parseInt(getParametroUrl('id'), 10);
 
     //Criando o título da página
-    fetch(`/api/transacoes/${idTransacao}`)
+    fetch(`/api/transacoes/${idTransacao}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar nome da transação: ' + response.statusText);
@@ -23,7 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //Carregando os dados das listas
     try {
-        fetch(`/api/transacoes/${idTransacao}/funcoes`)
+        fetch(`/api/transacoes/${idTransacao}/funcoes`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha ao carregar funções: ' + response.statusText);
@@ -73,7 +81,11 @@ function criarListas(funcoes){
 
         let transacaoFuncao
         
-        fetch(`/api/transacoes/${idTransacao}/funcoes/${funcao.idFuncao}`)
+        fetch(`/api/transacoes/${idTransacao}/funcoes/${funcao.idFuncao}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha ao carregar nome da transação: ' + response.statusText);
@@ -95,7 +107,10 @@ function criarListas(funcoes){
             if (confirmed) {
                 try {
                     const response = await fetch(`/api/transacoes/${transacaoFuncao.idTransacaoFuncao}/funcoes` , {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
                     });
                     if (response.ok) {
                         ulElement.remove();

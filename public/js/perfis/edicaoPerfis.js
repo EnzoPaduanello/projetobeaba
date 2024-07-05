@@ -1,16 +1,20 @@
-document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+const token = localStorage.getItem('tokenAuth');
 
+document.addEventListener('DOMContentLoaded', function() {
     $(document).ready(function() {
         $('.dadosSelect').select2({
-            placeholder: "Selecione as funções"
+            placeholder: "Selecione os módulos"
         });
     });
 
     const id = getParametroUrl('id')
     console.log(id)
 
-    fetch(`/api/perfis/${id}`)
+    fetch(`/api/perfis/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar perfil: ' + response.statusText);
@@ -31,7 +35,11 @@ function carregarDados(perfil){
     document.getElementById("descricaoInput").value = perfil.descricaoPerfil;
 
     const moduloSelect = document.getElementById("moduloSelect");
-    fetch('/api/modulos')
+    fetch('/api/modulos', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => response.json())
     .then(data => {
         data.forEach(modulo => {
@@ -63,6 +71,7 @@ document.getElementById('edicao-perfil-button').addEventListener('click', functi
             fetch(`/api/perfis/${idPerfil}`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(perfilData)
@@ -97,7 +106,11 @@ document.getElementById('edicao-perfil-button').addEventListener('click', functi
 
 async function carregarAssociacoesExistentes(idPerfil) {
     try {
-        const response = await fetch(`/api/perfis/${idPerfil}/modulos`);
+        const response = await fetch(`/api/perfis/${idPerfil}/modulos`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Falha ao carregar funções: ' + response.statusText);
         }
@@ -140,7 +153,10 @@ async function associarPerfilModulo() {
 
                 const response = await fetch(`/api/perfis/${perfilId}/modulos`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json' 
+                    },
                     body: JSON.stringify({ idModulo: moduloId })
                 });
 
@@ -172,6 +188,9 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
         if (confirmed) {
             fetch(`/api/perfis/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
             .then(response => {
                 if (!response.ok) {

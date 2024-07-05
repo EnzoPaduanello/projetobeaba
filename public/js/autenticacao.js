@@ -1,14 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const tokenLocalStorage = JSON.parse(localStorage.getItem('tokenAuth'));
-    console.log(tokenLocalStorage)
+    const token = localStorage.getItem('tokenAuth'); // Obtém o token do localStorage
+    console.log(token)
 
-    if (tokenLocalStorage === null){
-        window.location.href = '/login'
+    if (!token || token === null) {
+        window.location.href = '/login'; // Redireciona para o login se o token não estiver presente ou for inválido
     } else {
-        if (tokenLocalStorage.token === 'QQTech6@2024#'){
-            console.log('Login autenticado')
-        } else {
-            window.location.href = '/login'
-        }
-    } 
+        console.log('Login autenticado');
+    }
 });

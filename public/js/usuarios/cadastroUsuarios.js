@@ -1,5 +1,11 @@
+const token = localStorage.getItem('tokenAuth');
+
 document.addEventListener('DOMContentLoaded', function() {
-    //checkAuth();
+    $(document).ready(function() {
+        $('.dadosSelect').select2({
+            placeholder: "Selecione os perfis"
+        });
+    });
 
     const form = document.getElementById("cadastroUsuarioForm")
 
@@ -38,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('/api/usuarios', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(usuarioData)
@@ -69,7 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function criarOpcoesPerfil(){
     // Carrega os perfis e adiciona ao select
-    fetch('/api/perfis')
+    fetch('/api/perfis', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error('Falha ao carregar perfis: ' + response.statusText);
