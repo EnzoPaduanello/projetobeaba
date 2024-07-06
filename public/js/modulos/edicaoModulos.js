@@ -231,6 +231,7 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
     event.preventDefault();
 
     const id = getParametroUrl('id')
+    console.log(id)
 
     const confirmed = confirm('Tem certeza que deseja excluir este módulo?');
         if (confirmed) {
@@ -256,8 +257,7 @@ document.getElementById('exclusao-button').addEventListener('click', function(ev
             })
             .catch(error => {
                 console.error('Erro:', error);
-                alert('Verifique se o módulo tem associações vinculadas a ele! Se sim, exclua-as e tente novamente!')
-                alert('Falha no cadastro: ' + error.message);  // Mostra uma mensagem de erro em caso de falha na requisição
+                alert('Verifique se o módulo tem associações com perfis ou funções vinculadas a ele! Se sim, exclua-as e tente novamente!')  // Mostra uma mensagem de erro em caso de falha na requisição
             });
         };  
 });
@@ -268,3 +268,8 @@ document.getElementById('ver-associacao-button').addEventListener('click', funct
     const id = getParametroUrl('id');
     window.location.assign('/associacoes/moduloFuncao?id=' + id)
 })
+
+function getParametroUrl(id) {
+    const parametros = new URLSearchParams(window.location.search);
+    return parametros.get(id);
+};

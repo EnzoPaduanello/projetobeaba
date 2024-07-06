@@ -40,7 +40,6 @@ async function enviarEmail(toEmail, token) {
             body: JSON.stringify({
                 subject: 'Recuperação de Senha',
                 body: `Olá, aqui está o link para recuperar sua senha\n
-                    http://localhost:3000/recuperarSenha?token=${token}\n
                     http://192.168.0.57:3000/recuperarSenha?token=${token}`,
                 toEmail: toEmail
             })

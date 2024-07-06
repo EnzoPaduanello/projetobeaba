@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+function autenticar() {
     const token = localStorage.getItem('tokenAuth'); // Obtém o token do localStorage
     console.log(token)
 
@@ -7,4 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.log('Login autenticado');
     }
-});
+};
+
+autenticar()

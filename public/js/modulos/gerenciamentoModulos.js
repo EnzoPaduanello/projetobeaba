@@ -71,7 +71,7 @@ function criarListaModulos(modulos) {
         }
         
         else{
-            lTransacoes.textContent = 'Transação: ' + modulo.idTransacao
+            associarTransacoes(lTransacoes, modulo)
         }
 
         ulElement.appendChild(lTag);
@@ -95,9 +95,8 @@ document.getElementById('pesquisa-button').addEventListener('click', function(ev
         criarListaModulos(modulos);
     } else {
         const modulosFiltrados = modulos.filter(modulo => 
-            modulo.name === pesquisaUpperCase || 
-            (modulo.transacoes && modulo.transacoes.includes(pesquisaUpperCase)) || 
-            (modulo.funcoes && modulo.funcoes.includes(pesquisaUpperCase))
+            modulo.nomeModulo === pesquisaUpperCase ||
+            modulo.tagModulo === pesquisaUpperCase
         );
         criarListaModulos(modulosFiltrados);
     }
@@ -108,3 +107,25 @@ document.getElementById('cadastrar-modulo').addEventListener('click', function(e
 
     window.location.assign('/modulos/cadastro')
 })
+
+async function associarTransacoes(lTransacao, modulo){
+    try {
+        const response = await fetch('/api/transacoes', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Falha ao carregar transacoes: ' + response.statusText);
+        }
+        const transacoes = await response.json();
+        transacoes.forEach(transacao => {
+            if(modulo.idTransacao === transacao.idTransacao){
+                lTransacao.textContent = 'Transação: ' + transacao.nomeTransacao
+            }
+        });
+    } catch (error) {
+        console.error('Erro ao carregar transacoes:', error);
+        alert('Não foi possível carregar os transacoes.');
+    }
+}

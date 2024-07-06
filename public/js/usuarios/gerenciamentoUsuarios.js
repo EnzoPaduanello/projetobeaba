@@ -80,10 +80,11 @@ function criarListaUsuarios(usuarios) {
         if (usuario.idPerfil === null) {
             lPerfil.textContent = 'Perfis: Nenhum perfil cadastrado';
         } else {
-            lPerfil.textContent = 'Perfis: ' + usuario.idPerfil;
+            associarPerfis(lPerfil, usuario)
         }
+        
 
-        ulElement.appendChild(lMatricula);
+        ulElement.appendChild(lMatricula)
         ulElement.appendChild(lNome);
         ulElement.appendChild(lEmail);
         ulElement.appendChild(lPerfil);
@@ -91,4 +92,26 @@ function criarListaUsuarios(usuarios) {
         aElement.appendChild(ulElement);
         divLista.appendChild(aElement);
     });
+}
+
+async function associarPerfis(lPerfil, usuario){
+    try {
+        const response = await fetch('/api/perfis', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Falha ao carregar perfis: ' + response.statusText);
+        }
+        const perfis = await response.json();
+        perfis.forEach(perfil => {
+            if(usuario.idPerfil === perfil.idPerfil){
+                lPerfil.textContent = 'Perfil: ' + perfil.nomePerfil
+            }
+        });
+    } catch (error) {
+        console.error('Erro ao carregar perfis:', error);
+        alert('Não foi possível carregar os perfis.');
+    }
 }

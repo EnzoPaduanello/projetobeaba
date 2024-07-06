@@ -117,3 +117,8 @@ document.getElementById('exclusao-button').addEventListener('click', async funct
             });
         };  
 });
+
+function getParametroUrl(id) {
+    const parametros = new URLSearchParams(window.location.search);
+    return parametros.get(id);
+};

@@ -69,7 +69,6 @@ document.getElementById('edicao-transacao-button').addEventListener('click', fun
             .then(data => {
                 if (data.success) {
                     alert("Transação editada com sucesso");
-                    window.location.href = '/transacoes/gerenciamento'; // Redirecionar para a tela de login ou homepage após o sucesso
                 } else {
                     alert('Falha no cadastro: ' + data.message);  // Mostra uma mensagem de erro se não for bem-sucedido
                 }
@@ -153,7 +152,7 @@ async function associarTransacaoFuncao() {
 
                 const data = await response.json();
                 console.log('Success:', data);
-                window.location.assign('/associacoes/transacaoFuncao')
+                window.location.assign('/associacoes/transacaoFuncao?id=' + transacaoId)
             }));
 
             alert('Todas as funções foram associadas com sucesso');
